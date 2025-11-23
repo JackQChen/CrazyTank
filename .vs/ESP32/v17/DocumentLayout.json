@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\GitHub\\CrazyTank\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B8AC7C3F-032B-471F-AC44-33596FD72A95}|ESP32\\ESP32.vcxproj|D:\\GitHub\\CrazyTank\\ESP32\\ESP32.ino||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{B8AC7C3F-032B-471F-AC44-33596FD72A95}|ESP32\\ESP32.vcxproj|solutionrelative:ESP32\\ESP32.ino||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ESP32.ino",
+              "DocumentMoniker": "D:\\GitHub\\CrazyTank\\ESP32\\ESP32.ino",
+              "RelativeDocumentMoniker": "ESP32\\ESP32.ino",
+              "ToolTip": "D:\\GitHub\\CrazyTank\\ESP32\\ESP32.ino",
+              "RelativeToolTip": "ESP32\\ESP32.ino",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEEAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-23T11:53:13.261Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
