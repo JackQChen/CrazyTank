@@ -1,51 +1,47 @@
 #include <PS4Controller.h>
 
-// 硬件配置
-int DRV_A = 12;
-int DRV_B = 13;
-int DIR_A = 15;
-int DIR_B = 14;
-int ledPin = 4;
-int ledVal = 100;
+const int MOTOR_LEFT_PIN1 = 12;
+const int MOTOR_LEFT_PIN2 = 13;
+const int MOTOR_RIGHT_PIN1 = 15;
+const int MOTOR_RIGHT_PIN2 = 14;
+const int LED_PIN = 4;
+const int LED_CHANNEL = 7;
+const int LED_BRIGHTNESS = 100;
+
+const char* PS4_MAC = "0a:62:28:18:1b:50";
+const int DEADZONE = 15;
+const int MAX_SPEED = 255;
+const int DEBOUNCE_MS = 300;
+
 bool ledOn = false;
 
-// 控制参数
-const char* PS4_MAC = "0a:62:28:18:1b:50";
-const int DEADZONE = 10;
-const int MAX_SPEED = 255;
-const int DEBOUNCE = 300;
-
-// 电机控制
-void setMotor(int speedPin, int dirPin, int speed) {
-  if (speed > 0) {
-    analogWrite(speedPin, speed);
-    analogWrite(dirPin, 0);
-  } else if (speed < 0) {
-    analogWrite(speedPin, 0);
-    analogWrite(dirPin, -speed);
+void setMotor(int pin1, int pin2, int pwm) {
+  if (pwm == 0) {
+    analogWrite(pin1, 0);
+    analogWrite(pin2, 0);
+  } else if (pwm > 0) {
+    analogWrite(pin1, 0);
+    analogWrite(pin2, pwm);
   } else {
-    analogWrite(speedPin, 0);
-    analogWrite(dirPin, 0);
+    analogWrite(pin1, -pwm);
+    analogWrite(pin2, 0);
   }
 }
 
-void stopAll() {
-  setMotor(DRV_A, DRV_B, 0);
-  setMotor(DIR_A, DIR_B, 0);
-}
-
-// LED控制
-void initLED() {
-  ledcSetup(7, 5000, 8);
-  ledcAttachPin(ledPin, 7);
+void stopAllMotors() {
+  setMotor(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, 0);
+  setMotor(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, 0);
 }
 
 void toggleLED() {
   ledOn = !ledOn;
-  ledcWrite(7, ledOn ? ledVal : 0);
+  ledcWrite(LED_CHANNEL, ledOn ? LED_BRIGHTNESS : 0);
 }
 
-// PS4事件
+int mapStickToSpeed(int val) {
+  return abs(val) < DEADZONE ? 0 : map(val, -128, 127, -MAX_SPEED, MAX_SPEED);
+}
+
 void onConnect() {
   Serial.println("Connected");
   PS4.setLed(124, 252, 0);
@@ -54,25 +50,25 @@ void onConnect() {
 
 void onDisconnect() {
   Serial.println("Disconnected");
-  stopAll();
-}
-
-// 摇杆映射
-int mapStick(int val) {
-  return abs(val) < DEADZONE ? 0 : map(val, -128, 127, -MAX_SPEED, MAX_SPEED);
+  stopAllMotors();
+  ledOn = false;
+  ledcWrite(LED_CHANNEL, 0);
 }
 
 void setup() {
   Serial.begin(115200);
   
-  pinMode(DRV_A, OUTPUT);
-  pinMode(DRV_B, OUTPUT);
-  pinMode(DIR_A, OUTPUT);
-  pinMode(DIR_B, OUTPUT);
-  pinMode(ledPin, OUTPUT);
+  pinMode(MOTOR_LEFT_PIN1, OUTPUT);
+  pinMode(MOTOR_LEFT_PIN2, OUTPUT);
+  pinMode(MOTOR_RIGHT_PIN1, OUTPUT);
+  pinMode(MOTOR_RIGHT_PIN2, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
   
-  stopAll();
-  initLED();
+  stopAllMotors();
+  
+  ledcSetup(LED_CHANNEL, 5000, 8);
+  ledcAttachPin(LED_PIN, LED_CHANNEL);
+  ledcWrite(LED_CHANNEL, 0);
   
   PS4.begin(PS4_MAC);
   PS4.attachOnConnect(onConnect);
@@ -81,14 +77,14 @@ void setup() {
 
 void loop() {
   if (PS4.isConnected()) {
-    setMotor(DRV_A, DRV_B, mapStick(PS4.LStickY()));
-    setMotor(DIR_A, DIR_B, mapStick(PS4.RStickY()));
+    setMotor(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, mapStickToSpeed(PS4.LStickY()));
+    setMotor(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, mapStickToSpeed(PS4.RStickY()));
     
     if (PS4.Cross()) {
-      static unsigned long last = 0;
-      if (millis() - last > DEBOUNCE) {
+      static unsigned long lastPress = 0;
+      if (millis() - lastPress > DEBOUNCE_MS) {
         toggleLED();
-        last = millis();
+        lastPress = millis();
       }
     }
   }
