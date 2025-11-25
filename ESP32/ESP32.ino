@@ -2,8 +2,8 @@
 
 const int MOTOR_LEFT_PIN1 = 12;
 const int MOTOR_LEFT_PIN2 = 13;
-const int MOTOR_RIGHT_PIN1 = 15;
-const int MOTOR_RIGHT_PIN2 = 14;
+const int MOTOR_RIGHT_PIN1 = 14;
+const int MOTOR_RIGHT_PIN2 = 15;
 const int LED_PIN = 4;
 const int LED_CHANNEL = 7;
 const int LED_BRIGHTNESS = 100;
